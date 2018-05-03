@@ -9,17 +9,14 @@ class Menu:
         self.width = width
         self.height = height
 
-
     def click_start(self):
         newgame = game.Game()
         newgame.play()
-
 
     def click_quit(self, event):
         if event == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
 
     def show_menu(self):
         pygame.init()
@@ -37,7 +34,7 @@ class Menu:
         while True:
             pygame.display.update()
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONUP:
                     if pygame.mouse.get_pos()[0] >= start_button.get_left_x() and pygame.mouse.get_pos()[1] >= start_button.get_top_y():
                         if pygame.mouse.get_pos()[0] <= start_button.get_right_x() and pygame.mouse.get_pos()[1] <= start_button.get_bottom_y():
                             self.click_start()

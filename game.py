@@ -8,19 +8,21 @@ import numpy as np
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
-white = (255, 255, 255)
-red = (255, 0, 0)
-light_grey = (189,189,189)
-transparent_purple = (153, 50, 204)
-screen.fill(white)
+PLANE_COLOR = (0, 0, 255)  # blue
+
+BACKGROUND_COLOR = (255, 255, 255)
+PAINT_COLOR = (255, 0, 0)
+PAINT_PREVIEW_COLOR = (189, 189, 189)
+TRANSPARENT = (153, 50, 204)
+screen.fill(BACKGROUND_COLOR)
 
 paint_surface = pygame.Surface((800, 600))
-paint_surface.fill(transparent_purple)
-paint_surface.set_colorkey(transparent_purple)
+paint_surface.fill(TRANSPARENT)
+paint_surface.set_colorkey(TRANSPARENT)
 
 paint_preview_surface = pygame.Surface((800, 600))
-paint_preview_surface.fill(transparent_purple)
-paint_preview_surface.set_colorkey(transparent_purple)
+paint_preview_surface.fill(TRANSPARENT)
+paint_preview_surface.set_colorkey(TRANSPARENT)
 paint_preview_surface.set_alpha(128)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
@@ -32,6 +34,7 @@ def update_mouse():
 
 def get_distance(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+
 
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
@@ -64,11 +67,9 @@ class Game:
 
     def play(self):
 
-
         while True:
 
-            screen.fill(white)
-
+            screen.fill(BACKGROUND_COLOR)
 
             pos = update_mouse()
             plane.update(pos)
@@ -148,8 +149,6 @@ class Fighter:
         self.bearing += angular_acceleration*dt
 
     def draw(self, screen):
-
-        PLANE_COLOR = (0, 0, 255)  # blue
         cos_phi = math.cos(self.bearing)
         sin_phi = math.sin(self.bearing)
         t_matrix = np.matrix(
@@ -166,14 +165,14 @@ class Fighter:
         pygame.draw.polygon(screen, PLANE_COLOR, points)
 
     def draw_paint_preview(self, surface):
-        surface.fill(transparent_purple)
-        pygame.draw.circle(surface, light_grey,
-                           (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
+        surface.fill(TRANSPARENT)
+        pygame.draw.circle(surface, PAINT_PREVIEW_COLOR,
+                           (int(self.position[0]), int(self.position[1])), self.paint_stdev * 2, 0)
 
     def draw_shooting(self):
         for i in range(100):
             pygame.draw.circle(
-                paint_surface, red,
+                paint_surface, PAINT_COLOR,
                 (int(self.position[0] + random.gauss(0, self.paint_stdev)),
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
