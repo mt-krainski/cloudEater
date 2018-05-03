@@ -11,6 +11,28 @@ class DataHandler:
         self._db_abs_path_root = os.path.abspath(db_abs_path_root+"/test_database")
         self._Scene_list = glob.glob(self._db_abs_path_root+"/scene_*")
 
+
+    def new_Scene(self, SceneObject):
+        """
+        Creates a data entry from the Scene object
+        """
+        # make new scene object id
+        new_scene_id = len(self._Scene_list)
+        new_scene_path = self._db_abs_path_root+"/scene_" + new_scene_id
+        # make directory structure for new scene
+        os.mkdir(new_scene_path)
+        os.mkdir(new_scene_path + "/SAT")
+        os.mkdir(new_scene_path + "/TRUTH")
+        os.mkdir(new_scene_path + "/SUBMITS")
+        # Save satellite images
+        for i, satellite_image in enumerate(SceneObject.satellite_images):
+            fname = "sat_image"+str(i)+".png"
+            imsave(new_scene_path + "/SAT/" + fname, satellite_image)
+        # Save ground truth if exists
+        if SceneObject.ground_truth:
+            imsave(new_scene_path + "/TRUTH/truth.png", satellite_image)
+        if SceneObject.
+
     def pull_Scene(self, Scene_id):
         """
         Returns a Scene object from the database
@@ -20,21 +42,8 @@ class DataHandler:
         else:
             return 0
 
-
-    def push_Scene(self, SceneObject):
-        """
-        Creates a data entry from the Scene object
-        """
-        new_scene_id = len(self._Scene_list)
-        new_scene_path = self._db_abs_path_root+"/scene_" + new_scene_id
-        os.mkdir(new_scene_path)
-        os.mkdir(new_scene_path + "/SAT")
-        os.mkdir(new_scene_path + "/TRUTH")
-        os.mkdir(new_scene_path + "/SUBMITS")
-        for 
-            imsave('outfile.jpg', image_array)
-        
-
+    def add_guess(self, Scene_id, guess):
+        pass
 
     @property
     def db_abs_path_root(self):
