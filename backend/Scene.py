@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from backend.ImageLoader import load_test_images
+from backend.ImageLoader import load_test_images, load_guess
 import numpy as np
 
 
@@ -47,7 +47,7 @@ class Scene:
 
     @property
     def best_guess(self) -> np.ndarray:
-        return self.heatmap
+        return (self.heatmap - 0.5) * 2
         # TODO incorporate submits, instead of just looking at ground truth
         # return (self.ground_truth - 0.5) * 2
 
@@ -82,15 +82,15 @@ class Scene:
         return score
 
     def _show_information(self, marked_image: np.ndarray):
-        plt.imshow(marked_image)
+        plt.imshow(marked_image,cmap='plasma')
         plt.title("Your submitted marks")
         plt.show()
 
-        plt.imshow(self.heatmap)
+        plt.imshow(self.heatmap,cmap='hot')
         plt.title("Previous guess heatmap")
         plt.show()
 
-        plt.imshow(self.get_scoremap(marked_image))
+        plt.imshow(self.get_scoremap(marked_image), cmap='RdYlGn', vmin=-1, vmax=1)
         plt.title("Score map")
         plt.show()
 
@@ -103,10 +103,10 @@ if __name__=='__main__':
 
     imgs = load_test_images()
     s = Scene(*imgs)
-    print(f"Score: {s.submit_map(np.random.uniform(size=(600,800)))}")
+    print(f"Score: {s.submit_map(load_guess())}")
     for img in imgs[0] + [imgs[1]]:
         plt.imshow(img)
         plt.show()
 
-    plt.imshow(s.heatmap)
+    plt.imshow(s.heatmap, cmap='plasma')
     plt.show()
