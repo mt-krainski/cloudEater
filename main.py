@@ -124,7 +124,6 @@ while True:
                     int(plane_pos[1] + random.gauss(0, paint_standard_deviation))),
                 2, 0)
 
-    # if not counter % 10:
     draw_paint_preview(paint_preview_surface, paint_standard_deviation*2)
 
     pygame.display.update()
