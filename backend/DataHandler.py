@@ -3,18 +3,20 @@ import glob
 from scipy.misc import imsave
 from scipy.ndimage import imread
 from Scene import Scene
+from typing import List, Tuple
+
 
 class DataHandler:
     """
     Container for handling data on disk.
     """
 
-    def __init__(self, db_abs_path_root):
+    def __init__(self, db_abs_path_root: List[str]):
         self._db_abs_path_root = os.path.abspath(db_abs_path_root+"/test_database")
         self._Scene_list = glob.glob(self._db_abs_path_root+"/scene_*")
 
 
-    def new_Scene(self, SceneObject):
+    def new_Scene(self, SceneObject: List[Scene]):
         """
         Creates a data entry from the Scene object
         """
@@ -66,8 +68,15 @@ class DataHandler:
 
 
     def add_guess(self, Scene_id, guess):
+        """
+        Add new guess to Scene with number Scene_id
+        """
         scene_path = self._db_abs_path_root+"/scene_"+str(Scene_id)
-        pass
+        num = len(glob.glob(scene_path+"/SUBMITS/submit_*.png"))
+        new_guess_name = scene_path + "/SUBMITS/submit_" + str(num) + ".png"
+        if os.path.isfile(new_guess_name):
+            raise IOError("YOU FUCKED WITH THE SQUIRRELS MORTY! WE HAVE TO PACK UP AND MOVE TO A NEW REALITY MORTY! AHHHH I SAID WE COULD ONLY DO THAT A COUPLE OF TIMES! WE'RE FUCKED OVER HERE. BECAUSE UH THESE DAMN SQUIRRELS MORTY!")
+        imsave(new_guess_name, guess)
 
     @property
     def db_abs_path_root(self):
