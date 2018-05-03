@@ -36,7 +36,6 @@ def get_distance(a, b):
 
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
-    print(f"angle: {angle}")
     return angle
 
 
@@ -72,7 +71,7 @@ class Game:
 
     def play(self):
 
-        BackGround = Background(r"C:\Users\matej poliacek\Documents\GEOSS\cloudEater\test_images\color_test_1.jpg", [0, 0])
+        BackGround = Background(r".\test_images\color_test_1.jpg", [0, 0])
 
         while True:
 
