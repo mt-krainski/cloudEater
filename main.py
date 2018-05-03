@@ -9,9 +9,18 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
+
+
+
 white = (255, 255, 255)
 red = (255, 0, 0)
+ck_purple = (153, 50, 204)
 screen.fill(white)
+
+surface1 = pygame.Surface((800,600))
+surface1.fill(ck_purple)
+#surface1.set_alpha(255)
+surface1.set_colorkey(ck_purple)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
@@ -59,10 +68,11 @@ while True:
     pos = update_mouse()
     angle = -math.pi/2 + math.atan2((pos[1]-plane_pos[1]), (pos[0]-plane_pos[0]))
 
-    for x, y in marked_points:
+   # for x, y in marked_points:
         # screen.set_at((int(x), int(y)), red)
-        pygame.draw.circle(screen, red, (int(x), int(y)), 2, 0)
+    #    pygame.draw.circle(screen, red, (int(x), int(y)), 2, 0)
 
+    screen.blit(surface1, (0, 0))
     help(screen.fill)
     draw_plane(plane_pos[0],
                plane_pos[1],
@@ -75,10 +85,12 @@ while True:
 
     pygame.display.update()
     if pygame.mouse.get_pressed()[0]:
-        for i in range(10):
+        for i in range(1000):
             marked_points.append(
                 [plane_pos[0] + random.gauss(0, 20),
                  plane_pos[1] + random.gauss(0, 20)])
+
+            pygame.draw.circle(surface1, red, (int(plane_pos[0] + random.gauss(0, 20)), int(plane_pos[1] + random.gauss(0, 20))), 2, 0)
 
     if pygame.mouse.get_pressed()[2]:
         marked_points.clear()
