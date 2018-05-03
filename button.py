@@ -25,8 +25,8 @@ class Button:
 
     def write_label(self):
         pygame.font.init()
-        myfont = pygame.font.SysFont('Arial', 30)
-        textsurface = myfont.render(self.label, False, (0, 0, 0))
+        myfont = pygame.font.SysFont('Papyrus', 25, True)
+        textsurface = myfont.render(self.label, False, (16,66,87))
 
         text_width, text_height = myfont.size(self.label)
 

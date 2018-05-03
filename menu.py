@@ -34,8 +34,8 @@ class Menu:
         screen.blit(bg_image, [int(x*0.1) for x in game.SCREEN_SIZE])
         pygame.display.set_caption("menu")
 
-        start_button = button.Button(screen, "Start", -200, 280)
-        quit_button = button.Button(screen, "Quit", -120, 280)
+        start_button = button.Button(screen, "START", -200, 280)
+        quit_button = button.Button(screen, "QUIT", -120, 280)
 
         start_button.draw_button()
         quit_button.draw_button()
