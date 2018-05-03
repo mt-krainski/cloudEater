@@ -11,15 +11,27 @@ screen = pygame.display.set_mode((800, 600))
 
 white = (255, 255, 255)
 red = (255, 0, 0)
-ck_purple = (153, 50, 204)
+light_grey = (189,189,189)
+transparent_purple = (153, 50, 204)
 screen.fill(white)
 
-surface1 = pygame.Surface((800,600))
-surface1.fill(ck_purple)
-# surface1.set_alpha(255)
-surface1.set_colorkey(ck_purple)
+paint_surface = pygame.Surface((800, 600))
+paint_surface.fill(transparent_purple)
+paint_surface.set_colorkey(transparent_purple)
+
+paint_preview_surface = pygame.Surface((800, 600))
+paint_preview_surface.fill(transparent_purple)
+paint_preview_surface.set_colorkey(transparent_purple)
+paint_preview_surface.set_alpha(128)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
+
+
+def draw_paint_preview(surface, paint_radius):
+    surface.fill(transparent_purple)
+    pygame.draw.circle(surface, light_grey,
+                       (int(plane_pos[0]), int(plane_pos[1])), paint_radius, 0)
+
 
 
 def update_mouse():
@@ -68,7 +80,10 @@ angular_acceleration = 0
 
 marked_points = []
 
+paint_standard_deviation = 20
+
 while True:
+
     screen.fill(white)
     pos = update_mouse()
 
@@ -81,8 +96,9 @@ while True:
 
     delta_angle_old = delta_angle
 
-    screen.blit(surface1, (0, 0))
-    help(screen.fill)
+    screen.blit(paint_surface, (0, 0))
+    screen.blit(paint_preview_surface, (0, 0))
+
     draw_plane(plane_pos[0],
                plane_pos[1],
                angle, screen)
@@ -100,11 +116,18 @@ while True:
     plane_pos[0] -= velocity * math.sin(angle) * dt
     plane_pos[1] += velocity * math.cos(angle) * dt
 
-    pygame.display.update()
     if pygame.mouse.get_pressed()[0]:
         for i in range(100):
-            pygame.draw.circle(surface1, red, (int(plane_pos[0] + random.gauss(0, 20)), int(plane_pos[1] + random.gauss(0, 20))), 2, 0)
+            pygame.draw.circle(
+                paint_surface, red,
+                (int(plane_pos[0] + random.gauss(0, paint_standard_deviation)),
+                    int(plane_pos[1] + random.gauss(0, paint_standard_deviation))),
+                2, 0)
 
+    # if not counter % 10:
+    draw_paint_preview(paint_preview_surface, paint_standard_deviation*2)
+
+    pygame.display.update()
     if pygame.mouse.get_pressed()[2]:
         marked_points.clear()
 
