@@ -49,7 +49,7 @@ class DataHandler:
             # Read satellite images
             for f in glob.glob(scene_path+"/SAT/*.png"):
                 image = imread(f)
-                satellite_images.append(image)
+                satellite_images.append(image[:,:,0:3])
             # Read ground truth
             f = glob.glob(scene_path + "/TRUTH/*.png")[0]
             try:
@@ -63,8 +63,11 @@ class DataHandler:
                     submits.append(image)
             except FileNotFoundError:
                 pass
-            requested_scene = Scene(satellite_images, ground_truth, submits)
+            requested_scene = Scene(Scene_id, satellite_images, ground_truth, submits)
             return requested_scene
+
+    def get_scene_from_name(self, scene_folder_name: str):
+        return self.pull_Scene(int(scene_folder_name[6:]))
 
 
     def add_guess(self, Scene_id, guess):
