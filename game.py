@@ -8,10 +8,10 @@ import numpy as np
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
-PLANE_COLOR = (0, 0, 255)  # blue
+PLANE_COLOR = (26,35,126)  # blue
 
 BACKGROUND_COLOR = (255, 255, 255)
-PAINT_COLOR = (255, 0, 0)
+PAINT_COLOR = (229, 115, 115)
 PAINT_PREVIEW_COLOR = (189, 189, 189)
 TRANSPARENT = (153, 50, 204)
 screen.fill(BACKGROUND_COLOR)
