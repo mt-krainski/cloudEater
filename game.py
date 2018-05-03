@@ -124,6 +124,9 @@ class Game:
                         plane.decr_paint_stdev()
                 if keys[pygame.K_e]:
                     BackGround.set_image(scene_provider.get_next_satellite_image())
+                if keys[pygame.K_w]:
+                    scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
+                    pygame.quit()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()

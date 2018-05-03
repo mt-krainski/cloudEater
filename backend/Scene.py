@@ -1,6 +1,8 @@
 from typing import List, Tuple
-from backend.ImageLoader import load_test_images, load_guess
+from backend.ImageLoader import load_test_images, load_guess, normalize_and_flatten
 import numpy as np
+
+import matplotlib.pyplot as plt
 
 
 class Scene:
@@ -74,6 +76,7 @@ class Scene:
         :return: Evaluated score
         """
         # TODO evaluate score
+        marked_image = normalize_and_flatten(marked_image)
         score = self._evaluate_score(marked_image)
         if show_info:
             self._show_information(marked_image)
@@ -98,7 +101,6 @@ class Scene:
         return np.sum(self.get_scoremap(marked_image))
 
 if __name__=='__main__':
-    import matplotlib.pyplot as plt
     import matplotlib.image as mpimg
 
     imgs = load_test_images()

@@ -8,8 +8,8 @@ def normalize_and_flatten(img: np.ndarray):
         raise TypeError()
     if len(img.shape) == 3:
         img = np.mean(img, axis=2)
-    img -= np.min(img)
-    img /= np.max(img)
+    img = img - np.min(img)
+    img = img / np.max(img)
     return img
 
 def load_test_images() -> Tuple[List[np.ndarray], np.ndarray, List[np.ndarray]]:
