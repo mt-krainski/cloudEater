@@ -2,3 +2,4 @@ numpy
 pygame
 scipy
 matplotlib
+pillow
