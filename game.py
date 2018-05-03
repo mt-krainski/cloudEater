@@ -135,7 +135,9 @@ class Game:
             plane.draw_paint_preview(paint_preview_surface)
 
             if pygame.mouse.get_pressed()[2]:
-                marked_points.clear()
+                paint_surface.fill(transparent_purple)
+                pass
+                # marked_points.clear()
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -158,6 +160,8 @@ class Game:
                     BackGround.set_image(scene_provider.get_next_satellite_image())
                 if keys[pygame.K_w]:
                     scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
+                    paint_surface.fill(transparent_purple)
+                    playing = False
 
                 if event.type == pygame.QUIT:
                     pygame.quit()

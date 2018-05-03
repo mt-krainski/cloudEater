@@ -28,26 +28,25 @@ class Menu:
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
 
-        screen.fill((238,238,238))
         bg_image = pygame.image.load(MENU_BG_PATH)
         bg_image = pygame.transform.scale(bg_image, [int(x*0.9) for x in game.SCREEN_SIZE])
-        screen.blit(bg_image, [int(x*0.1) for x in game.SCREEN_SIZE])
         pygame.display.set_caption("menu")
 
         start_button = button.Button(screen, "START", -200, 280)
         quit_button = button.Button(screen, "QUIT", -120, 280)
 
-        start_button.draw_button()
-        quit_button.draw_button()
-
         pygame.font.init()
         title_font = pygame.font.SysFont('Papyrus', 40, True)
-        textsurface = title_font.render("CLOUD", False, (16,66,87))
-        screen.blit(textsurface, (600, 375))
-        textsurface = title_font.render("EATER", False, (16,66,87))
-        screen.blit(textsurface, (725, 425))
+        textsurface_cloud = title_font.render("CLOUD", False, (16,66,87))
+        textsurface_eater = title_font.render("EATER", False, (16,66,87))
 
         while True:
+            screen.fill((238, 238, 238))
+            screen.blit(bg_image, [int(x * 0.1) for x in game.SCREEN_SIZE])
+            start_button.draw_button()
+            quit_button.draw_button()
+            screen.blit(textsurface_cloud, (600, 375))
+            screen.blit(textsurface_eater, (725, 425))
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONUP:
