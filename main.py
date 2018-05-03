@@ -69,6 +69,7 @@ class Game:
     def play(self):
         while True:
 
+            plane = Fighter(plane_pos, velocity, angle, delta_angle)
             screen.fill(white)
 
             pos = update_mouse()
@@ -163,7 +164,7 @@ class Fighter:
                 2, 0)
 
 
-plane = Fighter(plane_pos, velocity, angle, delta_angle)
+
 
 
 
