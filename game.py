@@ -39,9 +39,7 @@ def get_angle(a, b):
     return angle
 
 
-angle = 0
 old_angle = 0
-delta_angle = 0
 delta_angle_old = 0
 delta_distance = 0
 plane_pos = [100, 100]
@@ -55,8 +53,9 @@ marked_points = []
 
 pos = plane_pos
 vel = velocity
-bear = angle
-delta_bear = delta_angle
+bear = 0
+delta_bear = 0
+
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
@@ -64,6 +63,7 @@ class Background(pygame.sprite.Sprite):
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
+
 
 class Game:
     def __init__(self):
@@ -193,9 +193,5 @@ class Fighter:
     def decr_paint_stdev(self):
         self.paint_stdev -= 1
 
-plane = Fighter(plane_pos, velocity, angle, delta_angle, 20)
 
-
-
-#game = Game()
-#game.play()
+plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
