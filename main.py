@@ -11,7 +11,13 @@ screen = pygame.display.set_mode((800, 600))
 
 white = (255, 255, 255)
 red = (255, 0, 0)
+ck_purple = (153, 50, 204)
 screen.fill(white)
+
+surface1 = pygame.Surface((800,600))
+surface1.fill(ck_purple)
+# surface1.set_alpha(255)
+surface1.set_colorkey(ck_purple)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
@@ -29,7 +35,7 @@ def get_distance(a, b):
 
 
 def draw_plane(x, y, phi, screen):
-    PLANE_COLOR = (0, 0, 255) #blue
+    PLANE_COLOR = (0, 0, 255)  # blue
     cos_phi = math.cos(phi)
     sin_phi = math.sin(phi)
     t_matrix = np.matrix(
@@ -72,17 +78,15 @@ while True:
 
     delta_angle = old_angle - get_angle(pos, plane_pos)
 
-    if delta_angle - delta_angle_old > 1.0:
+    if delta_angle - delta_angle_old > math.pi:
         delta_angle -= math.pi*2
-    elif delta_angle - delta_angle_old < -1.0:
+    elif delta_angle - delta_angle_old < -math.pi:
         delta_angle += math.pi*2
 
     delta_angle_old = delta_angle
 
-    for x, y in marked_points:
-        # screen.set_at((int(x), int(y)), red)
-        pygame.draw.circle(screen, red, (int(x), int(y)), 2, 0)
-
+    screen.blit(surface1, (0, 0))
+    help(screen.fill)
     draw_plane(plane_pos[0],
                plane_pos[1],
                angle, screen)
@@ -96,20 +100,14 @@ while True:
     velocity = 0.5*get_distance(pos, plane_pos)
 
     old_angle = angle
-    #
-    # print(f"angle: {math.degrees(angle)}")
-    # print(f"old_angle: {math.degrees(old_angle)}")
-    # print(f"delta_angle: {math.degrees(delta_angle)}")
 
     plane_pos[0] -= velocity * math.sin(angle) * dt
     plane_pos[1] += velocity * math.cos(angle) * dt
 
     pygame.display.update()
     if pygame.mouse.get_pressed()[0]:
-        for i in range(10):
-            marked_points.append(
-                [plane_pos[0] + random.gauss(0, 20),
-                 plane_pos[1] + random.gauss(0, 20)])
+        for i in range(100):
+            pygame.draw.circle(surface1, red, (int(plane_pos[0] + random.gauss(0, 20)), int(plane_pos[1] + random.gauss(0, 20))), 2, 0)
 
     if pygame.mouse.get_pressed()[2]:
         marked_points.clear()
