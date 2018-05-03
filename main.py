@@ -9,7 +9,7 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
-
+spread = 1;
 
 
 white = (255, 255, 255)
@@ -86,16 +86,36 @@ while True:
     pygame.display.update()
     if pygame.mouse.get_pressed()[0]:
         for i in range(1000):
-            marked_points.append(
-                [plane_pos[0] + random.gauss(0, 20),
-                 plane_pos[1] + random.gauss(0, 20)])
 
-            pygame.draw.circle(surface1, red, (int(plane_pos[0] + random.gauss(0, 20)), int(plane_pos[1] + random.gauss(0, 20))), 2, 0)
+            new_x = plane_pos[0] + random.gauss(0, spread)
+            new_y = plane_pos[1] + random.gauss(0, spread)
+
+            marked_points.append(
+                [new_x, new_y])
+
+            pygame.draw.circle(surface1, red, (int(new_x), int(new_y)), 2, 0)
 
     if pygame.mouse.get_pressed()[2]:
         marked_points.clear()
 
     for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4:
+                if spread < 20:
+                    spread += 1
+            if event.button == 5:
+                if spread > 1:
+                    spread -= 1
+
+        # same as above but for key - find a way to avoid repetition
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            if spread < 20:
+                spread += 1
+        if keys[pygame.K_DOWN]:
+            if spread > 1:
+                spread -= 1
+
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
