@@ -16,6 +16,7 @@ screen.fill(white)
 
 paint_surface = pygame.Surface((800, 600))
 paint_surface.fill(transparent_purple)
+paint_surface.set_alpha(80)
 paint_surface.set_colorkey(transparent_purple)
 
 paint_preview_surface = pygame.Surface((800, 600))
@@ -58,12 +59,20 @@ vel = velocity
 bear = angle
 delta_bear = delta_angle
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
 class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
 
     def play(self):
 
+        BackGround = Background(r"C:\Users\matej poliacek\Documents\GEOSS\cloudEater\test_images\color_test_1.jpg", [0, 0])
 
         while True:
 
@@ -74,6 +83,7 @@ class Game:
             plane.update(pos)
             # plane.update_bearing(pos)
 
+            screen.blit(BackGround.image, BackGround.rect)
             screen.blit(paint_surface, (0, 0))
             screen.blit(paint_preview_surface, (0, 0))
 
