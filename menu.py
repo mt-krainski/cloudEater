@@ -1,0 +1,45 @@
+import pygame
+import sys
+import button
+
+class Menu:
+
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def click_start(self):
+        print("instantiate main game")
+
+
+    def click_quit(self):
+        pygame.quit()
+        sys.exit
+
+
+    def show_menu(self):
+        screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("menu");
+
+        screen.fill((175,175,175))
+
+        start_button = button.Button(screen, "Start", 0)
+        quit_button = button.Button(screen, "Quit", 100);
+
+        start_button.draw_button()
+        quit_button.draw_button()
+
+        while True:
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pos()[0] >= start_button.get_left_x() and pygame.mouse.get_pos()[1] >= start_button.get_top_y():
+                        if pygame.mouse.get_pos()[0] <= start_button.get_right_x() and pygame.mouse.get_pos()[1] <= start_button.get_bottom_y():
+                            self.click_start();
+                    if pygame.mouse.get_pos()[0] >= quit_button.get_left_x() and pygame.mouse.get_pos()[1] >= quit_button.get_top_y():
+                        if pygame.mouse.get_pos()[0] <= quit_button.get_right_x() and pygame.mouse.get_pos()[1] <= quit_button.get_bottom_y():
+                            print("quit")
+                            self.click_quit();
+
+
+

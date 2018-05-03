@@ -152,6 +152,8 @@ while True:
                 spread -= 1
 
         if event.type == pygame.QUIT:
+            #pygame.image.save(paint_surface, "C:/surf.jpg")
+            #pygame.image.tostring(paint_surface, "RGB")
             pygame.quit()
             sys.exit()
 
