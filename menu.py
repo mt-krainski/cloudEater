@@ -1,6 +1,7 @@
 import pygame
 import sys
 import button
+import game
 
 class Menu:
 
@@ -9,7 +10,8 @@ class Menu:
         self.height = height
 
     def click_start(self):
-        print("instantiate main game")
+        newgame = game.Game()
+        #newgame.play()
 
 
     def click_quit(self):
@@ -19,12 +21,12 @@ class Menu:
 
     def show_menu(self):
         screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("menu");
+        pygame.display.set_caption("menu")
 
         screen.fill((175,175,175))
 
         start_button = button.Button(screen, "Start", 0)
-        quit_button = button.Button(screen, "Quit", 100);
+        quit_button = button.Button(screen, "Quit", 100)
 
         start_button.draw_button()
         quit_button.draw_button()
