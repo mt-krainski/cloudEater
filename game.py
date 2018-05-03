@@ -64,13 +64,15 @@ delta_bear = delta_angle
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
-        self.image = pygame.image.load(image_file)
-        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)  #call Sprite
+        if image_file is not None:
+            self.image = pygame.image.load(image_file)
+            self.rect = self.image.get_rect()
 
     def set_image(self, image: np.ndarray):
         surf = pygame.surfarray.make_surface(np.swapaxes(image,0,1))
         self.image = surf
+        self.rect = self.image.get_rect()
 
 class Game:
     def __init__(self):
@@ -79,6 +81,9 @@ class Game:
     def play(self):
         playing = True
         level_finished = False
+
+        BackGround = Background(None, [0, 0])
+        BackGround.set_image(scene_provider.get_next_satellite_image())
         while playing:
 
             screen.fill(white)
