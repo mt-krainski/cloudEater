@@ -5,6 +5,10 @@ import sys
 import math
 import numpy as np
 
+from backend.SceneProvider import SceneProvider
+
+scene_provider = SceneProvider()
+
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
@@ -64,17 +68,21 @@ class Background(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
-        self.rect.left, self.rect.top = location
+
+    def set_image(self, image: np.ndarray):
+        surf = pygame.surfarray.make_surface(np.swapaxes(image,0,1))
+        self.image = surf
 
 class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
 
     def play(self):
+        playing = True
+        level_finished = False
+        BackGround = Background(r"C:\Users\Marcel Stefko\PycharmProjects\cloudEater\test_images\color_test_1.jpg", [0, 0])
 
-        BackGround = Background(r"C:\Users\matej poliacek\Documents\GEOSS\cloudEater\test_images\color_test_1.jpg", [0, 0])
-
-        while True:
+        while playing:
 
             screen.fill(white)
 
@@ -114,6 +122,8 @@ class Game:
                 if keys[pygame.K_DOWN]:
                     if plane.paint_stdev > 1:
                         plane.decr_paint_stdev()
+                if keys[pygame.K_e]:
+                    BackGround.set_image(scene_provider.get_next_satellite_image())
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -121,9 +131,6 @@ class Game:
 
             msElapsed = clock.tick(refresh_frequency)
 
-class Scene:
-    def __init__(self):
-        return
 
 class Fighter:
     def __init__(self, pos, vel, bear, delta_bear, paint_stdev):
