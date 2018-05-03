@@ -1,6 +1,8 @@
 import os
 import glob
 from scipy.misc import imsave
+from scipy.ndimage import imread
+from Scene import Scene
 
 class DataHandler:
     """
@@ -31,18 +33,40 @@ class DataHandler:
         # Save ground truth if exists
         if SceneObject.ground_truth:
             imsave(new_scene_path + "/TRUTH/truth.png", satellite_image)
-        if SceneObject.
 
     def pull_Scene(self, Scene_id):
         """
         Returns a Scene object from the database
         """
-        if not os.path.isdir(self._db_abs_path_root+"/scene_"+str(Scene_id)):
+        scene_path = self._db_abs_path_root+"/scene_"+str(Scene_id)
+        if not os.path.isdir(scene_path):
             return 1
         else:
-            return 0
+            satellite_images = []
+            submits = []
+            # Read satellite images
+            for f in glob.glob(scene_path+"/SAT/*.png"):
+                image = imread(f)
+                satellite_images.append(image)
+            # Read ground truth
+            f = glob.glob(scene_path + "/TRUTH/*.png")[0]
+            try:
+                ground_truth = imread(f, flatten=True)
+            except FileNotFoundError:
+                ground_truth = []
+            # Read previous submits
+            try:
+                for f in glob.glob(scene_path+"/SUBMITS/*.png"):
+                    image = imread(f, flatten=True)
+                    submits.append(image)
+            except FileNotFoundError:
+                pass
+            requested_scene = Scene(satellite_images, ground_truth, submits)
+            return requested_scene
+
 
     def add_guess(self, Scene_id, guess):
+        scene_path = self._db_abs_path_root+"/scene_"+str(Scene_id)
         pass
 
     @property
@@ -56,4 +80,4 @@ class DataHandler:
 
 if __name__ == "__main__":
     db = DataHandler(os.getcwd())
-    print(db.scene_list)
+    test_scene = db.pull_Scene(1)

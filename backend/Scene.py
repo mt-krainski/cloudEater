@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from backend.ImageLoader import load_test_images
+from ImageLoader import load_test_images
 import numpy as np
 
 
