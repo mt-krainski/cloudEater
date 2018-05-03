@@ -5,7 +5,6 @@ import sys
 import math
 import numpy as np
 
-pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
@@ -54,9 +53,6 @@ angular_acceleration = 0
 
 marked_points = []
 
-paint_standard_deviation = 20
-
-
 pos = plane_pos
 vel = velocity
 bear = angle
@@ -67,9 +63,12 @@ class Game:
         self.dt = 1 / refresh_frequency
 
     def play(self):
+
+
         while True:
 
             screen.fill(white)
+
 
             pos = update_mouse()
             plane.update(pos)
@@ -81,31 +80,48 @@ class Game:
             plane.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
-                plane.draw_shooting(paint_standard_deviation)
-            plane.draw_paint_preview(paint_preview_surface, paint_standard_deviation * 2)
+                plane.draw_shooting()
+            plane.draw_paint_preview(paint_preview_surface)
 
             pygame.display.update()
             if pygame.mouse.get_pressed()[2]:
                 marked_points.clear()
 
             for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 4:
+                        if plane.paint_stdev < 20:
+                            plane.incr_paint_stdev()
+                    if event.button == 5:
+                        if plane.paint_stdev > 1:
+                            plane.decr_paint_stdev()
+
+                    # same as above but for key - find a way to avoid repetition
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_UP]:
+                    if plane.paint_stdev < 20:
+                        plane.incr_paint_stdev()
+                if keys[pygame.K_DOWN]:
+                    if plane.paint_stdev > 1:
+                        plane.decr_paint_stdev()
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
             msElapsed = clock.tick(refresh_frequency)
 
-
 class Scene:
     def __init__(self):
         return
 
 class Fighter:
-    def __init__(self, pos, vel, bear, delta_bear):
+    def __init__(self, pos, vel, bear, delta_bear, paint_stdev):
         self.position = pos
         self.velocity = vel
         self.bearing = bear
         self.delta_bearing = delta_bear
+        self.paint_stdev = paint_stdev
 
 
     def update(self, mouse_position):
@@ -149,23 +165,28 @@ class Fighter:
 
         pygame.draw.polygon(screen, PLANE_COLOR, points)
 
-    def draw_paint_preview(self, surface, paint_radius):
+    def draw_paint_preview(self, surface):
         surface.fill(transparent_purple)
         pygame.draw.circle(surface, light_grey,
-                           (int(self.position[0]), int(self.position[1])), paint_radius, 0)
+                           (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
-    def draw_shooting(self, paint_dstd):
+    def draw_shooting(self):
         for i in range(100):
             pygame.draw.circle(
                 paint_surface, red,
-                (int(self.position[0] + random.gauss(0, paint_dstd)),
-                    int(self.position[1] + random.gauss(0, paint_dstd))),
+                (int(self.position[0] + random.gauss(0, self.paint_stdev)),
+                    int(self.position[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
 
+    def incr_paint_stdev(self):
+        self.paint_stdev += 1
 
-plane = Fighter(plane_pos, velocity, angle, delta_angle)
+    def decr_paint_stdev(self):
+        self.paint_stdev -= 1
+
+plane = Fighter(plane_pos, velocity, angle, delta_angle, 20)
 
 
 
-game = Game()
-game.play()
+#game = Game()
+#game.play()
