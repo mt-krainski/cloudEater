@@ -46,29 +46,60 @@ def draw_plane(x, y, phi, screen):
     pygame.draw.polygon(screen, PLANE_COLOR, points)
 
 
+def get_angle(a, b):
+    angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
+    print(f"angle: {angle}")
+    return angle
+
+
 angle = 0
+old_angle = 0
+delta_angle = 0
+delta_angle_old = 0
+delta_distance = 0
 plane_pos = [100, 100]
 velocity = 10
-refresh_freqency = 100
-dt = 1/refresh_freqency
+refresh_frequency = 100
+dt = 1 / refresh_frequency
+linear_acceleration = 0
+angular_acceleration = 0
 
 marked_points = []
 
 while True:
     screen.fill(white)
     pos = update_mouse()
-    angle = -math.pi/2 + math.atan2((pos[1]-plane_pos[1]), (pos[0]-plane_pos[0]))
+
+    delta_angle = old_angle - get_angle(pos, plane_pos)
+
+    if delta_angle - delta_angle_old > 1.0:
+        delta_angle -= math.pi*2
+    elif delta_angle - delta_angle_old < -1.0:
+        delta_angle += math.pi*2
+
+    delta_angle_old = delta_angle
 
     for x, y in marked_points:
         # screen.set_at((int(x), int(y)), red)
         pygame.draw.circle(screen, red, (int(x), int(y)), 2, 0)
 
-    help(screen.fill)
     draw_plane(plane_pos[0],
                plane_pos[1],
                angle, screen)
 
+    delta_distance = get_distance(pos, plane_pos)
+
+    linear_acceleration = 0.5*get_distance(pos, plane_pos)
+    angular_acceleration = -2*delta_angle
+
+    angle += angular_acceleration*dt
     velocity = 0.5*get_distance(pos, plane_pos)
+
+    old_angle = angle
+    #
+    # print(f"angle: {math.degrees(angle)}")
+    # print(f"old_angle: {math.degrees(old_angle)}")
+    # print(f"delta_angle: {math.degrees(delta_angle)}")
 
     plane_pos[0] -= velocity * math.sin(angle) * dt
     plane_pos[1] += velocity * math.cos(angle) * dt
@@ -88,4 +119,4 @@ while True:
             pygame.quit()
             sys.exit()
 
-    msElapsed = clock.tick(refresh_freqency)
+    msElapsed = clock.tick(refresh_frequency)
