@@ -21,10 +21,6 @@ surface1.set_colorkey(ck_purple)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
-for x, y in BASIC_TRIANGLE_POINTLIST:
-    print(f"x: {x}")
-    print(f"y: {y}")
-
 
 def update_mouse():
     return pygame.mouse.get_pos()
