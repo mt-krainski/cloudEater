@@ -40,6 +40,13 @@ class Menu:
         start_button.draw_button()
         quit_button.draw_button()
 
+        pygame.font.init()
+        title_font = pygame.font.SysFont('Papyrus', 40, True)
+        textsurface = title_font.render("CLOUD", False, (16,66,87))
+        screen.blit(textsurface, (600, 375))
+        textsurface = title_font.render("EATER", False, (16,66,87))
+        screen.blit(textsurface, (725, 425))
+
         while True:
             pygame.display.update()
             for event in pygame.event.get():
