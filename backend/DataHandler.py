@@ -75,7 +75,7 @@ class DataHandler:
         Add new guess to Scene with number Scene_id
         """
         scene_path = self._db_abs_path_root+"/scene_"+str(Scene_id)
-        num = len(glob.glob(scene_path+"/SUBMITS/submit_*.png"))
+        num = len(glob.glob(scene_path+"/SUBMITS/submit_*.png")) + 1
         new_guess_name = scene_path + "/SUBMITS/submit_" + str(num) + ".png"
         if os.path.isfile(new_guess_name):
             raise IOError("YOU FUCKED WITH THE SQUIRRELS MORTY! WE HAVE TO PACK UP AND MOVE TO A NEW REALITY MORTY! AHHHH I SAID WE COULD ONLY DO THAT A COUPLE OF TIMES! WE'RE FUCKED OVER HERE. BECAUSE UH THESE DAMN SQUIRRELS MORTY!")
