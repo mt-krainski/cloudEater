@@ -30,8 +30,8 @@ class Menu:
 
         screen.fill((238,238,238))
         bg_image = pygame.image.load(MENU_BG_PATH)
-        bg_image = pygame.transform.scale(bg_image, [int(x*0.9) for x in screen.get_size()])
-        screen.blit(bg_image, [int(x*0.1) for x in screen.get_size()])
+        bg_image = pygame.transform.scale(bg_image, [int(x*0.9) for x in game.SCREEN_SIZE])
+        screen.blit(bg_image, [int(x*0.1) for x in game.SCREEN_SIZE])
         pygame.display.set_caption("menu")
 
         start_button = button.Button(screen, "Start", -200, 280)
@@ -39,6 +39,13 @@ class Menu:
 
         start_button.draw_button()
         quit_button.draw_button()
+
+        pygame.font.init()
+        title_font = pygame.font.SysFont('Papyrus', 40, True)
+        textsurface = title_font.render("CLOUD", False, (16,66,87))
+        screen.blit(textsurface, (600, 375))
+        textsurface = title_font.render("EATER", False, (16,66,87))
+        screen.blit(textsurface, (725, 425))
 
         while True:
             pygame.display.update()

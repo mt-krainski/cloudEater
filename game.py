@@ -20,15 +20,44 @@ light_grey = (189,189,189)
 transparent_purple = (153, 50, 204)
 screen.fill(white)
 
-paint_surface = pygame.Surface((800, 600))
+paint_surface = pygame.Surface(SCREEN_SIZE)
 paint_surface.fill(transparent_purple)
 paint_surface.set_alpha(80)
 paint_surface.set_colorkey(transparent_purple)
 
-paint_preview_surface = pygame.Surface((800, 600))
+paint_preview_surface = pygame.Surface(SCREEN_SIZE)
 paint_preview_surface.fill(transparent_purple)
 paint_preview_surface.set_colorkey(transparent_purple)
 paint_preview_surface.set_alpha(128)
+
+side_menu_surface = pygame.Surface((200, SCREEN_SIZE[1]))
+side_menu_surface.fill((238,238,238))
+
+MENU_BG_PATH = "./img/menu_bg.png"
+bg_image = pygame.image.load(MENU_BG_PATH)
+bg_image = pygame.transform.scale(bg_image, [200, int(600/4)])
+side_menu_surface.blit(bg_image, [0, SCREEN_SIZE[1]-int(600/4)])
+
+pygame.font.init()
+SIDE_MENU_TEXTS = [
+    "CLOUD EATER",
+    "",
+    "left click - spray",
+    "E - switch image type",
+    "up - increase spread",
+    "down -decrease spread",
+    "m wheel - change spread",
+    "w - exit"]
+
+SIDE_MENU_TEXT_SIZE = 20
+side_menu_font = pygame.font.SysFont('Arial', SIDE_MENU_TEXT_SIZE, True)
+for i, text in enumerate(SIDE_MENU_TEXTS):
+    side_menu_text_surface = side_menu_font.render(text, False, (0, 0, 0))
+    text_width, text_height = side_menu_font.size(text)
+    text_height *= 1.2
+    side_menu_surface.blit(
+        side_menu_text_surface,
+        (10, 20 + i*text_height))
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
@@ -105,7 +134,6 @@ class Game:
                 plane.draw_shooting()
             plane.draw_paint_preview(paint_preview_surface)
 
-            pygame.display.update()
             if pygame.mouse.get_pressed()[2]:
                 marked_points.clear()
 
@@ -130,12 +158,13 @@ class Game:
                     BackGround.set_image(scene_provider.get_next_satellite_image())
                 if keys[pygame.K_w]:
                     scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
-                    pygame.quit()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
+            screen.blit(side_menu_surface, (SCREEN_SIZE[0], 0))
+            pygame.display.update()
             msElapsed = clock.tick(refresh_frequency)
 
 

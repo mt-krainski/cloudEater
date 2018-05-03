@@ -9,13 +9,14 @@ class Scene:
     """ Wrapper for the entire (one place on earth with clouds)
 
     """
-    def __init__(self, satellite_images: List[np.ndarray], ground_truth: np.ndarray, submits: List[np.ndarray]):
+    def __init__(self, id, satellite_images: List[np.ndarray], ground_truth: np.ndarray, submits: List[np.ndarray]):
         """
 
         :param satellite_images: List of images of size [m x n x i], where i can be anything, usually 3 for RGB
         :param ground_truth: [m x n] binary image
         :param submits: List of [m x n] binary images
         """
+        self._id = id
         self._satellite_images = satellite_images
         self._ground_truth = ground_truth
         self._submits = submits
@@ -30,6 +31,10 @@ class Scene:
             raise TypeError(f"Ground truth must have shape {self.shape}, not {ground_truth.shape}")
         if any(s.shape != self.shape for s in submits):
             raise TypeError(f"Submits must have shape {self.shape}, not {[s.shape for s in submits]}")
+
+    @property
+    def id(self) -> int:
+        return self._id
 
     @property
     def satellite_images(self) -> List[np.ndarray]:

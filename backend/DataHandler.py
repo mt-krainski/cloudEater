@@ -2,7 +2,7 @@ import os
 import glob
 from scipy.misc import imsave
 from scipy.ndimage import imread
-from Scene import Scene
+from backend.Scene import Scene
 from typing import List, Tuple
 
 
