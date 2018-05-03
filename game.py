@@ -5,8 +5,10 @@ import sys
 import math
 import numpy as np
 
+SCREEN_SIZE = (800, 600)
+
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode(SCREEN_SIZE)
 
 white = (255, 255, 255)
 red = (255, 0, 0)
@@ -158,7 +160,7 @@ class Fighter:
 
     def draw(self, screen):
 
-        PLANE_COLOR = (0, 0, 255)  # blue
+        PLANE_COLOR = (16,66,87)
         cos_phi = math.cos(self.bearing)
         sin_phi = math.sin(self.bearing)
         t_matrix = np.matrix(

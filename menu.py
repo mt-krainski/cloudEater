@@ -22,14 +22,20 @@ class Menu:
 
 
     def show_menu(self):
+
+        MENU_BG_PATH = "./img/menu_bg.png"
+
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
+
+        screen.fill((238,238,238))
+        bg_image = pygame.image.load(MENU_BG_PATH)
+        bg_image = pygame.transform.scale(bg_image, [int(x*0.9) for x in screen.get_size()])
+        screen.blit(bg_image, [int(x*0.1) for x in screen.get_size()])
         pygame.display.set_caption("menu")
 
-        screen.fill((175,175,175))
-
-        start_button = button.Button(screen, "Start", 0)
-        quit_button = button.Button(screen, "Quit", 100)
+        start_button = button.Button(screen, "Start", -200, 280)
+        quit_button = button.Button(screen, "Quit", -120, 280)
 
         start_button.draw_button()
         quit_button.draw_button()
@@ -37,7 +43,7 @@ class Menu:
         while True:
             pygame.display.update()
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONUP:
                     if pygame.mouse.get_pos()[0] >= start_button.get_left_x() and pygame.mouse.get_pos()[1] >= start_button.get_top_y():
                         if pygame.mouse.get_pos()[0] <= start_button.get_right_x() and pygame.mouse.get_pos()[1] <= start_button.get_bottom_y():
                             self.click_start()
