@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from backend.ImageLoader import load_test_images
+from backend.ImageLoader import load_test_images, load_guess
 import numpy as np
 
 
@@ -31,6 +31,10 @@ class Scene:
 
     @property
     def satellite_images(self) -> List[np.ndarray]:
+        """
+
+        :return: List of real satellite images to be used as underlay
+        """
         return self._satellite_images
 
     @property
@@ -43,7 +47,7 @@ class Scene:
 
     @property
     def best_guess(self) -> np.ndarray:
-        return self.heatmap
+        return (self.heatmap - 0.5) * 2
         # TODO incorporate submits, instead of just looking at ground truth
         # return (self.ground_truth - 0.5) * 2
 
@@ -55,19 +59,43 @@ class Scene:
         heatmap = heatmap / np.max(heatmap)
         return heatmap
 
+    def get_scoremap(self, image_to_score: np.ndarray) -> np.ndarray:
+        return np.multiply(image_to_score, self.best_guess)
+
     @property
     def shape(self) -> Tuple[int, int]:
         return self._shape
 
-    def submit_map(self, marked_image: np.ndarray):
+    def submit_map(self, marked_image: np.ndarray, show_info = True) -> float:
+        """ Call this method when you are done with a round. It will return the score.
+
+        :param marked_image: Binary image where 1 is marked by player, and 0 is not marked by player
+        :param show_info: Whether to show additional information (plots)
+        :return: Evaluated score
+        """
         # TODO evaluate score
         score = self._evaluate_score(marked_image)
+        if show_info:
+            self._show_information(marked_image)
         # TODO store submit in database
 
         return score
 
-    def _evaluate_score(self, marked_image: np.ndarray):
-        return np.sum(np.multiply(marked_image, self.best_guess))
+    def _show_information(self, marked_image: np.ndarray):
+        plt.imshow(marked_image,cmap='plasma')
+        plt.title("Your submitted marks")
+        plt.show()
+
+        plt.imshow(self.heatmap,cmap='hot')
+        plt.title("Previous guess heatmap")
+        plt.show()
+
+        plt.imshow(self.get_scoremap(marked_image), cmap='RdYlGn', vmin=-1, vmax=1)
+        plt.title("Score map")
+        plt.show()
+
+    def _evaluate_score(self, marked_image: np.ndarray) -> float:
+        return np.sum(self.get_scoremap(marked_image))
 
 if __name__=='__main__':
     import matplotlib.pyplot as plt
@@ -75,10 +103,10 @@ if __name__=='__main__':
 
     imgs = load_test_images()
     s = Scene(*imgs)
-    print(f"Score: {s.submit_map(np.random.uniform(size=(600,800)))}")
+    print(f"Score: {s.submit_map(load_guess())}")
     for img in imgs[0] + [imgs[1]]:
         plt.imshow(img)
         plt.show()
 
-    plt.imshow(s.heatmap)
+    plt.imshow(s.heatmap, cmap='plasma')
     plt.show()

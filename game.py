@@ -8,21 +8,20 @@ import numpy as np
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
 
-PLANE_COLOR = (26,35,126)  # blue
-
-BACKGROUND_COLOR = (255, 255, 255)
-PAINT_COLOR = (229, 115, 115)
-PAINT_PREVIEW_COLOR = (189, 189, 189)
-TRANSPARENT = (153, 50, 204)
-screen.fill(BACKGROUND_COLOR)
+white = (255, 255, 255)
+red = (255, 0, 0)
+light_grey = (189,189,189)
+transparent_purple = (153, 50, 204)
+screen.fill(white)
 
 paint_surface = pygame.Surface((800, 600))
-paint_surface.fill(TRANSPARENT)
-paint_surface.set_colorkey(TRANSPARENT)
+paint_surface.fill(transparent_purple)
+paint_surface.set_alpha(80)
+paint_surface.set_colorkey(transparent_purple)
 
 paint_preview_surface = pygame.Surface((800, 600))
-paint_preview_surface.fill(TRANSPARENT)
-paint_preview_surface.set_colorkey(TRANSPARENT)
+paint_preview_surface.fill(transparent_purple)
+paint_preview_surface.set_colorkey(transparent_purple)
 paint_preview_surface.set_alpha(128)
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
@@ -35,10 +34,8 @@ def update_mouse():
 def get_distance(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
 
-
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
-    print(f"angle: {angle}")
     return angle
 
 
@@ -61,20 +58,31 @@ vel = velocity
 bear = angle
 delta_bear = delta_angle
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
 class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
 
     def play(self):
 
+        BackGround = Background(r".\test_images\color_test_1.jpg", [0, 0])
+
         while True:
 
-            screen.fill(BACKGROUND_COLOR)
+            screen.fill(white)
+
 
             pos = update_mouse()
             plane.update(pos)
             # plane.update_bearing(pos)
 
+            screen.blit(BackGround.image, BackGround.rect)
             screen.blit(paint_surface, (0, 0))
             screen.blit(paint_preview_surface, (0, 0))
 
@@ -149,6 +157,8 @@ class Fighter:
         self.bearing += angular_acceleration*dt
 
     def draw(self, screen):
+
+        PLANE_COLOR = (0, 0, 255)  # blue
         cos_phi = math.cos(self.bearing)
         sin_phi = math.sin(self.bearing)
         t_matrix = np.matrix(
@@ -165,14 +175,14 @@ class Fighter:
         pygame.draw.polygon(screen, PLANE_COLOR, points)
 
     def draw_paint_preview(self, surface):
-        surface.fill(TRANSPARENT)
-        pygame.draw.circle(surface, PAINT_PREVIEW_COLOR,
-                           (int(self.position[0]), int(self.position[1])), self.paint_stdev * 2, 0)
+        surface.fill(transparent_purple)
+        pygame.draw.circle(surface, light_grey,
+                           (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
     def draw_shooting(self):
         for i in range(100):
             pygame.draw.circle(
-                paint_surface, PAINT_COLOR,
+                paint_surface, red,
                 (int(self.position[0] + random.gauss(0, self.paint_stdev)),
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
