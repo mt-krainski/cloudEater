@@ -70,6 +70,7 @@ def update_mouse():
 def get_distance(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
 
+
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
     return angle
@@ -78,7 +79,7 @@ def get_angle(a, b):
 old_angle = 0
 delta_angle_old = 0
 delta_distance = 0
-plane_pos = [100, 100]
+plane_pos = [400, 300]
 velocity = 10
 refresh_frequency = 100
 dt = 1 / refresh_frequency
@@ -110,10 +111,26 @@ class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
         self.plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
+        self.aux_sprite_right = AuxFighterSprite(
+                                [int(SCREEN_SIZE[0]), 0], 
+                                self.plane)
+        self.aux_sprite_left = AuxFighterSprite(
+                                [-int(SCREEN_SIZE[0]), 0], 
+                                self.plane)
+        self.aux_sprite_bottom = AuxFighterSprite(
+                                [0, int(SCREEN_SIZE[1])], 
+                                self.plane)
+        self.aux_sprite_top = AuxFighterSprite(
+                                [0, -int(SCREEN_SIZE[1])], 
+                                self.plane)
+
 
     def play(self):
         playing = True
         level_finished = False
+        pygame.event.set_grab(True)
+        pygame.mouse.set_visible(False)
+        pygame.mouse.set_pos(400,300)
 
         BackGround = Background(None, [0, 0])
         BackGround.set_image(scene_provider.get_next_satellite_image())
@@ -124,13 +141,37 @@ class Game:
 
             pos = update_mouse()
             self.plane.update(pos)
-            # plane.update_bearing(pos)
+
+            # Check to see if needs to be swapped with current
+            if self.plane.position[0] <  0 :
+                # off screen left, SWAP WITH RIGHT
+                self.plane.position[0] = self.plane.position[0] + SCREEN_SIZE[0]
+            elif self.plane.position[0]  > SCREEN_SIZE[0]:
+                # off screen right, SWAP WITH LEFT
+                self.plane.position[0] = self.plane.position[0] - SCREEN_SIZE[0]
+            elif self.plane.position[1]  < 0:
+                # off screen top, SWAP WITH BOTTOM
+                self.plane.position[1] = self.plane.position[1] + SCREEN_SIZE[1]
+            elif self.plane.position[1] > SCREEN_SIZE[1]:
+                # off screen bottom, SWAP WITH TOP
+                self.plane.position[1] = self.plane.position[1] - SCREEN_SIZE[1]
+
+            # Update shadow positions
+            self.aux_sprite_right.copy_position(self.plane)
+            self.aux_sprite_left.copy_position(self.plane)
+            self.aux_sprite_bottom.copy_position(self.plane)
+            self.aux_sprite_top.copy_position(self.plane)
+
 
             screen.blit(BackGround.image, BackGround.rect)
             screen.blit(paint_surface, (0, 0))
             screen.blit(paint_preview_surface, (0, 0))
 
             self.plane.draw(screen)
+            self.aux_sprite_right.draw(screen)
+            self.aux_sprite_left.draw(screen)
+            self.aux_sprite_bottom.draw(screen)
+            self.aux_sprite_top.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
                 self.plane.draw_shooting(red)
@@ -139,6 +180,10 @@ class Game:
             if pygame.mouse.get_pressed()[2]:
                 self.plane.draw_shooting(transparent_purple)
             self.plane.draw_paint_preview(paint_preview_surface)
+            self.aux_sprite_right.draw_paint_preview(paint_preview_surface)
+            self.aux_sprite_left.draw_paint_preview(paint_preview_surface)
+            self.aux_sprite_bottom.draw_paint_preview(paint_preview_surface)
+            self.aux_sprite_top.draw_paint_preview(paint_preview_surface)
                 #paint_surface.fill(transparent_purple)
                 #pass
                 # marked_points.clear()
@@ -165,8 +210,12 @@ class Game:
                 if keys[pygame.K_w]:
                     scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
                     paint_surface.fill(transparent_purple)
+                    self.game_end()
                     playing = False
-
+                if keys[pygame.K_ESCAPE]:
+                    self.game_end()
+                    playing = False
+                    
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -174,6 +223,10 @@ class Game:
             screen.blit(side_menu_surface, (SCREEN_SIZE[0], 0))
             pygame.display.update()
             msElapsed = clock.tick(refresh_frequency)
+
+    def game_end(self):
+        pygame.event.set_grab(False)
+        pygame.mouse.set_visible(True)
 
 
 class Fighter:
@@ -183,6 +236,7 @@ class Fighter:
         self.bearing = bear
         self.delta_bearing = delta_bear
         self.paint_stdev = paint_stdev
+        self.origin = [400, 300]
 
 
     def update(self, mouse_position):
@@ -195,10 +249,10 @@ class Fighter:
         self.position[1] += self.velocity * math.cos(self.bearing) * dt
 
     def update_velocity(self, mouse_position):
-        self.velocity = 0.5*get_distance(self.position, mouse_position)
+        self.velocity = 0.5*get_distance(self.origin, mouse_position)
 
     def update_bearing(self, mouse_position):
-        delta_bearing = self.bearing - get_angle(mouse_position, self.position)
+        delta_bearing = self.bearing - get_angle(mouse_position, self.origin)
 
         if delta_bearing - self.delta_bearing > math.pi:
             delta_bearing -= 2*math.pi
@@ -246,4 +300,45 @@ class Fighter:
         self.paint_stdev -= 1
 
 
+class AuxFighterSprite():
+    """
+    Implements shadow sprites for wraparound.
+    """
+    def __init__(self, OFFSET, PlayerFigherObject):
+        self.position = [0, 0]
+        self.velocity = 0
+        self.bearing = 0
+        self.paint_stdev = 0
+        self.origin = PlayerFigherObject.origin
+        self.OFFSET = OFFSET
+        self.copy_position(PlayerFigherObject)
+
+    def copy_position(self, FigtherObject):
+        self.position[0] = FigtherObject.position[0] + self.OFFSET[0]
+        self.position[1] = FigtherObject.position[1] + self.OFFSET[1]
+        self.velocity = FigtherObject.velocity
+        self.bearing  = FigtherObject.bearing
+        self.paint_stdev = FigtherObject.paint_stdev
+
+    def draw(self, screen):
+        PLANE_COLOR = (16,66,87)
+        cos_phi = math.cos(self.bearing)
+        sin_phi = math.sin(self.bearing)
+        t_matrix = np.matrix(
+            [[cos_phi, -sin_phi, self.position[0]],
+             [sin_phi, cos_phi, self.position[1]],
+             [0, 0, 1]])
+
+        new_pointlist = \
+            [(t_matrix * np.matrix([X, Y, 1]).transpose())[0:2].tolist()
+             for X, Y in BASIC_TRIANGLE_POINTLIST]
+
+        points = [[item[0][0], item[1][0]] for item in new_pointlist]
+
+        pygame.draw.polygon(screen, PLANE_COLOR, points)
+    
+    def draw_paint_preview(self, surface):
+        #surface.fill(transparent_purple)
+        pygame.draw.circle(surface, light_grey,
+                           (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
