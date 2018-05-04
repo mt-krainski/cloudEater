@@ -66,6 +66,7 @@ BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
 GAMEMODE_SOLO = 0
 GAMEMODE_ADVERSARY = 1
+GAMEMODE_TRAINING = 2
 
 def update_mouse():
     return pygame.mouse.get_pos()
@@ -149,12 +150,21 @@ class Game:
             self.plane.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
-                self.plane.draw_shooting(red)
+                if self.game_mode == GAMEMODE_TRAINING:
+                    self.plane.draw_with_mouse(red)
+                else:
+                    self.plane.draw_shooting(red)
 
 
             if pygame.mouse.get_pressed()[2]:
-                self.plane.draw_shooting(transparent_purple)
-            self.plane.draw_paint_preview(paint_preview_surface)
+                if self.game_mode == GAMEMODE_TRAINING:
+                    self.plane.draw_with_mouse(transparent_purple)
+                else:
+                    self.plane.draw_shooting(transparent_purple)
+            if self.game_mode == GAMEMODE_TRAINING:
+                self.plane.draw_paint_preview_mouse(paint_preview_surface)
+            else:
+                self.plane.draw_paint_preview(paint_preview_surface)
                 #paint_surface.fill(transparent_purple)
                 #pass
                 # marked_points.clear()
@@ -247,12 +257,25 @@ class Fighter:
         pygame.draw.circle(surface, light_grey,
                            (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
+    def draw_paint_preview_mouse(self, surface):
+        surface.fill(transparent_purple)
+        pygame.draw.circle(surface, light_grey,
+                           (int(pygame.mouse.get_pos()[0]), int(pygame.mouse.get_pos()[1])), self.paint_stdev * 2, 0)
+
     def draw_shooting(self, colour):
         for i in range(100):
             pygame.draw.circle(
                 paint_surface, colour,
                 (int(self.position[0] + random.gauss(0, self.paint_stdev)),
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
+                2, 0)
+
+    def draw_with_mouse(self, colour):
+        for i in range(100):
+            pygame.draw.circle(
+                paint_surface, colour,
+                (int(pygame.mouse.get_pos()[0] + random.gauss(0, self.paint_stdev)),
+                 int(pygame.mouse.get_pos()[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
 
     def incr_paint_stdev(self) -> object:
