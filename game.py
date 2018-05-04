@@ -148,7 +148,7 @@ class Game:
 
             paint_surface.blit(adversary_surface, (0,0))
 
-        BackGround.set_image(scene_provider.get_next_satellite_image())
+        #BackGround.set_image(scene_provider.get_next_satellite_image())
 
         while playing:
 
@@ -182,11 +182,12 @@ class Game:
             screen.blit(paint_surface, (0, 0))
             screen.blit(paint_preview_surface, (0, 0))
 
-            self.plane.draw(screen)
-            self.aux_sprite_right.draw(screen)
-            self.aux_sprite_left.draw(screen)
-            self.aux_sprite_bottom.draw(screen)
-            self.aux_sprite_top.draw(screen)
+            if self.game_mode != GAMEMODE_TRAINING:
+                self.plane.draw(screen)
+                self.aux_sprite_right.draw(screen)
+                self.aux_sprite_left.draw(screen)
+                self.aux_sprite_bottom.draw(screen)
+                self.aux_sprite_top.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
                 if self.game_mode == GAMEMODE_TRAINING:
@@ -230,8 +231,7 @@ class Game:
                 if keys[pygame.K_e]:
                     BackGround.set_image(scene_provider.get_next_satellite_image())
                 if keys[pygame.K_w]:
-                    scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
-                    paint_surface.fill(transparent_purple)
+                    scene_provider.end_round(pygame.surfarray.array2d(paint_surface))              
                     self.game_end()
                     playing = False
                 if keys[pygame.K_ESCAPE]:
@@ -247,8 +247,10 @@ class Game:
             msElapsed = clock.tick(refresh_frequency)
 
     def game_end(self):
+        paint_surface.fill(transparent_purple)
         pygame.event.set_grab(False)
         pygame.mouse.set_visible(True)
+        self.plane.position = plane_pos
 
 
 class Fighter:
