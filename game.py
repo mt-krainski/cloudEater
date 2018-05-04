@@ -125,9 +125,9 @@ class Game:
         if self.game_mode == GAMEMODE_ADVERSARY:
 
             adversary_surface = pygame.Surface(SCREEN_SIZE)
-            setup_transparent_surface(adversary_surface, (0,0,0), 80)
+            setup_transparent_surface(adversary_surface, (0,0,0), 20)
 
-            adversary_bg_image = pygame.image.load(" ")
+            adversary_bg_image = pygame.surfarray.make_surface(np.swapaxes(scene_provider.get_submit(np.random.randint(0,100)),0,1))
 
             adversary_surface.blit(adversary_bg_image, [0, 0])
             paint_surface.blit(adversary_surface, (0,0))
