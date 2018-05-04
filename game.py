@@ -74,6 +74,7 @@ def update_mouse():
 def get_distance(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
 
+
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
     return angle
@@ -81,7 +82,6 @@ def get_angle(a, b):
 old_angle = 0
 delta_angle_old = 0
 delta_distance = 0
-plane_pos = [100, 100]
 velocity = 10
 refresh_frequency = 100
 dt = 1 / refresh_frequency
@@ -113,6 +113,7 @@ class Game:
     def __init__(self, game_mode):
         self.dt = 1 / refresh_frequency
         self.plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
+<<<<<<< HEAD
         self.game_mode = game_mode
 
     def play(self):
@@ -140,7 +141,6 @@ class Game:
 
             pos = update_mouse()
             self.plane.update(pos)
-            # plane.update_bearing(pos)
 
             screen.blit(BackGround.image, BackGround.rect)
             screen.blit(paint_surface, (0, 0))
@@ -182,7 +182,6 @@ class Game:
                     scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
                     paint_surface.fill(transparent_purple)
                     playing = False
-
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
