@@ -78,7 +78,7 @@ class DataHandler:
         num = len(glob.glob(scene_path+"/SUBMITS/submit_*.png")) + 1
         new_guess_name = scene_path + "/SUBMITS/submit_" + str(num) + ".png"
         if os.path.isfile(new_guess_name):
-            raise IOError("YOU FUCKED WITH THE SQUIRRELS MORTY! WE HAVE TO PACK UP AND MOVE TO A NEW REALITY MORTY! AHHHH I SAID WE COULD ONLY DO THAT A COUPLE OF TIMES! WE'RE FUCKED OVER HERE. BECAUSE UH THESE DAMN SQUIRRELS MORTY!")
+            raise IOError("File {} already exists! This should not happen!".format(new_guess_name))
         imsave(new_guess_name, guess)
 
     @property
