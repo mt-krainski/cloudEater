@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from backend.ImageLoader import load_test_images, load_guess, normalize_and_flatten
+from scipy.ndimage import gaussian_filter
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -90,15 +91,19 @@ class Scene:
         return score
 
     def _show_information(self, marked_image: np.ndarray):
-        plt.imshow(marked_image,cmap='plasma')
+        stdev = 3
+        blurred_marks = gaussian_filter(marked_image, stdev)
+        plt.imshow(blurred_marks,cmap='plasma')
         plt.title("Your submitted marks")
         plt.show()
 
-        plt.imshow(self.heatmap,cmap='hot')
+        blurred_heatmap = gaussian_filter(self.heatmap, 2*stdev)
+        plt.imshow(blurred_heatmap,cmap='hot')
         plt.title("Previous guess heatmap")
         plt.show()
 
-        plt.imshow(self.get_scoremap(marked_image), cmap='RdYlGn', vmin=-1, vmax=1)
+        blurred_scoremap = gaussian_filter(self.get_scoremap(marked_image), stdev)
+        plt.imshow(blurred_scoremap, cmap='RdYlGn', vmin=-1, vmax=1)
         plt.title("Score map")
         plt.show()
 
