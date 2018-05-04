@@ -24,6 +24,7 @@ class Menu:
     def show_menu(self):
 
         MENU_BG_PATH = "./img/menu_bg.png"
+        ICON_PATH = "./img/icon.png"
 
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
@@ -31,6 +32,9 @@ class Menu:
         bg_image = pygame.image.load(MENU_BG_PATH)
         bg_image = pygame.transform.scale(bg_image, [int(x*0.9) for x in game.SCREEN_SIZE])
         pygame.display.set_caption("menu")
+
+        icon = pygame.image.load(ICON_PATH)
+        pygame.display.set_icon(icon)
 
         start_button = button.Button(screen, "PLAY SOLO", -220, 280)
         start_adv_button = button.Button(screen, "ADVERSARY MODE", -140, 280)
