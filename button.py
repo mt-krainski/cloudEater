@@ -2,19 +2,20 @@ import pygame
 
 class Button:
 
-    def __init__(self, screen, label, offset=0):
+    def __init__(self, screen, label, y_offset=0, x_offset=0):
         self.screen = screen
-        self.buttonColour = (153, 153, 255)
+        self.buttonColour = (54,143,202)
         self.buttonHeight = 50
         self.buttonWidth = 150
-        self.offset = offset
+        self.y_offset = y_offset
+        self.x_offset = x_offset
         self.label = label
 
     def get_left_x(self):
-        return self.screen.get_width() / 2 - self.buttonWidth / 2
+        return self.screen.get_width() / 2 - self.buttonWidth / 2 + self.x_offset
 
     def get_top_y(self):
-        return self.screen.get_height() / 2 - self.buttonHeight / 2 + self.offset
+        return self.screen.get_height() / 2 - self.buttonHeight / 2 + self.y_offset
 
     def get_right_x(self):
         return self.get_left_x() + self.buttonWidth
@@ -24,8 +25,8 @@ class Button:
 
     def write_label(self):
         pygame.font.init()
-        myfont = pygame.font.SysFont('Arial', 30)
-        textsurface = myfont.render(self.label, False, (0, 0, 0))
+        myfont = pygame.font.SysFont('Papyrus', 25, True)
+        textsurface = myfont.render(self.label, False, (16,66,87))
 
         text_width, text_height = myfont.size(self.label)
 

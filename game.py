@@ -5,8 +5,14 @@ import sys
 import math
 import numpy as np
 
+SCREEN_SIZE = (800, 600)
+
+from backend.SceneProvider import SceneProvider
+
+scene_provider = SceneProvider()
+
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode(SCREEN_SIZE)
 
 white = (255, 255, 255)
 red = (255, 0, 0)
@@ -14,15 +20,44 @@ light_grey = (189,189,189)
 transparent_purple = (153, 50, 204)
 screen.fill(white)
 
-paint_surface = pygame.Surface((800, 600))
+paint_surface = pygame.Surface(SCREEN_SIZE)
 paint_surface.fill(transparent_purple)
 paint_surface.set_alpha(80)
 paint_surface.set_colorkey(transparent_purple)
 
-paint_preview_surface = pygame.Surface((800, 600))
+paint_preview_surface = pygame.Surface(SCREEN_SIZE)
 paint_preview_surface.fill(transparent_purple)
 paint_preview_surface.set_colorkey(transparent_purple)
 paint_preview_surface.set_alpha(128)
+
+side_menu_surface = pygame.Surface((200, SCREEN_SIZE[1]))
+side_menu_surface.fill((238,238,238))
+
+MENU_BG_PATH = "./img/menu_bg.png"
+bg_image = pygame.image.load(MENU_BG_PATH)
+bg_image = pygame.transform.scale(bg_image, [200, int(600/4)])
+side_menu_surface.blit(bg_image, [0, SCREEN_SIZE[1]-int(600/4)])
+
+pygame.font.init()
+SIDE_MENU_TEXTS = [
+    "CLOUD EATER",
+    "",
+    "left click - spray",
+    "E - switch image type",
+    "up - increase spread",
+    "down -decrease spread",
+    "m wheel - change spread",
+    "w - exit"]
+
+SIDE_MENU_TEXT_SIZE = 20
+side_menu_font = pygame.font.SysFont('Arial', SIDE_MENU_TEXT_SIZE, True)
+for i, text in enumerate(SIDE_MENU_TEXTS):
+    side_menu_text_surface = side_menu_font.render(text, False, (0, 0, 0))
+    text_width, text_height = side_menu_font.size(text)
+    text_height *= 1.2
+    side_menu_surface.blit(
+        side_menu_text_surface,
+        (10, 20 + i*text_height))
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
@@ -39,9 +74,7 @@ def get_angle(a, b):
     return angle
 
 
-angle = 0
 old_angle = 0
-delta_angle = 0
 delta_angle_old = 0
 delta_distance = 0
 plane_pos = [100, 100]
@@ -55,25 +88,34 @@ marked_points = []
 
 pos = plane_pos
 vel = velocity
-bear = angle
-delta_bear = delta_angle
+bear = 0
+delta_bear = 0
+
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
-        self.image = pygame.image.load(image_file)
+        pygame.sprite.Sprite.__init__(self)  #call Sprite
+        if image_file is not None:
+            self.image = pygame.image.load(image_file)
+            self.rect = self.image.get_rect()
+
+    def set_image(self, image: np.ndarray):
+        surf = pygame.surfarray.make_surface(np.swapaxes(image,0,1))
+        self.image = surf
         self.rect = self.image.get_rect()
-        self.rect.left, self.rect.top = location
+
 
 class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
 
     def play(self):
+        playing = True
+        level_finished = False
 
-        BackGround = Background(r".\test_images\color_test_1.jpg", [0, 0])
-
-        while True:
+        BackGround = Background(None, [0, 0])
+        BackGround.set_image(scene_provider.get_next_satellite_image())
+        while playing:
 
             screen.fill(white)
 
@@ -92,9 +134,10 @@ class Game:
                 plane.draw_shooting()
             plane.draw_paint_preview(paint_preview_surface)
 
-            pygame.display.update()
             if pygame.mouse.get_pressed()[2]:
-                marked_points.clear()
+                paint_surface.fill(transparent_purple)
+                pass
+                # marked_points.clear()
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -113,16 +156,21 @@ class Game:
                 if keys[pygame.K_DOWN]:
                     if plane.paint_stdev > 1:
                         plane.decr_paint_stdev()
+                if keys[pygame.K_e]:
+                    BackGround.set_image(scene_provider.get_next_satellite_image())
+                if keys[pygame.K_w]:
+                    scene_provider.end_round(pygame.surfarray.array2d(paint_surface))
+                    paint_surface.fill(transparent_purple)
+                    playing = False
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
+            screen.blit(side_menu_surface, (SCREEN_SIZE[0], 0))
+            pygame.display.update()
             msElapsed = clock.tick(refresh_frequency)
 
-class Scene:
-    def __init__(self):
-        return
 
 class Fighter:
     def __init__(self, pos, vel, bear, delta_bear, paint_stdev):
@@ -158,7 +206,7 @@ class Fighter:
 
     def draw(self, screen):
 
-        PLANE_COLOR = (0, 0, 255)  # blue
+        PLANE_COLOR = (16,66,87)
         cos_phi = math.cos(self.bearing)
         sin_phi = math.sin(self.bearing)
         t_matrix = np.matrix(
@@ -193,9 +241,5 @@ class Fighter:
     def decr_paint_stdev(self):
         self.paint_stdev -= 1
 
-plane = Fighter(plane_pos, velocity, angle, delta_angle, 20)
 
-
-
-#game = Game()
-#game.play()
+plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
