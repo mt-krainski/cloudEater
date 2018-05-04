@@ -62,6 +62,8 @@ for i, text in enumerate(SIDE_MENU_TEXTS):
 
 BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
+GAMEMODE_SOLO = 0
+GAMEMODE_ADVERSARY = 1
 
 def update_mouse():
     return pygame.mouse.get_pos()
@@ -107,9 +109,10 @@ class Background(pygame.sprite.Sprite):
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, game_mode):
         self.dt = 1 / refresh_frequency
         self.plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
+        self.game_mode = game_mode
 
     def play(self):
         playing = True
@@ -120,7 +123,6 @@ class Game:
         while playing:
 
             screen.fill(white)
-
 
             pos = update_mouse()
             self.plane.update(pos)

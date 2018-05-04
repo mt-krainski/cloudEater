@@ -6,7 +6,7 @@ class Button:
         self.screen = screen
         self.buttonColour = (54,143,202)
         self.buttonHeight = 50
-        self.buttonWidth = 150
+        self.buttonWidth = 300
         self.y_offset = y_offset
         self.x_offset = x_offset
         self.label = label
@@ -25,7 +25,7 @@ class Button:
 
     def write_label(self):
         pygame.font.init()
-        myfont = pygame.font.SysFont('Papyrus', 25, True)
+        myfont = pygame.font.SysFont('Papyrus', 20, True)
         textsurface = myfont.render(self.label, False, (16,66,87))
 
         text_width, text_height = myfont.size(self.label)
