@@ -27,7 +27,7 @@ def setup_transparent_surface(surface, transparent_colour, alpha):
     surface.set_alpha(alpha)
 
 paint_surface = pygame.Surface(SCREEN_SIZE)
-setup_transparent_surface(paint_surface, transparent_purple, 80)
+setup_transparent_surface(paint_surface, transparent_purple, 180)
 
 paint_preview_surface = pygame.Surface(SCREEN_SIZE)
 setup_transparent_surface(paint_preview_surface, transparent_purple, 128)
