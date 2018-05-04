@@ -109,6 +109,7 @@ class Background(pygame.sprite.Sprite):
 class Game:
     def __init__(self):
         self.dt = 1 / refresh_frequency
+        self.plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
 
     def play(self):
         playing = True
@@ -122,22 +123,22 @@ class Game:
 
 
             pos = update_mouse()
-            plane.update(pos)
+            self.plane.update(pos)
             # plane.update_bearing(pos)
 
             screen.blit(BackGround.image, BackGround.rect)
             screen.blit(paint_surface, (0, 0))
             screen.blit(paint_preview_surface, (0, 0))
 
-            plane.draw(screen)
+            self.plane.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
-                plane.draw_shooting(red)
+                self.plane.draw_shooting(red)
 
 
             if pygame.mouse.get_pressed()[2]:
-                plane.draw_shooting(transparent_purple)
-            plane.draw_paint_preview(paint_preview_surface)
+                self.plane.draw_shooting(transparent_purple)
+            self.plane.draw_paint_preview(paint_preview_surface)
                 #paint_surface.fill(transparent_purple)
                 #pass
                 # marked_points.clear()
@@ -145,20 +146,20 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:
-                        if plane.paint_stdev < 20:
-                            plane.incr_paint_stdev()
+                        if self.plane.paint_stdev < 20:
+                            self.plane.incr_paint_stdev()
                     if event.button == 5:
-                        if plane.paint_stdev > 1:
-                            plane.decr_paint_stdev()
+                        if self.plane.paint_stdev > 1:
+                            self.plane.decr_paint_stdev()
 
                     # same as above but for key - find a way to avoid repetition
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_UP]:
-                    if plane.paint_stdev < 20:
-                        plane.incr_paint_stdev()
+                    if self.plane.paint_stdev < 20:
+                        self.plane.incr_paint_stdev()
                 if keys[pygame.K_DOWN]:
-                    if plane.paint_stdev > 1:
-                        plane.decr_paint_stdev()
+                    if self.plane.paint_stdev > 1:
+                        self.plane.decr_paint_stdev()
                 if keys[pygame.K_e]:
                     BackGround.set_image(scene_provider.get_next_satellite_image())
                 if keys[pygame.K_w]:
@@ -238,11 +239,11 @@ class Fighter:
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
 
-    def incr_paint_stdev(self):
+    def incr_paint_stdev(self) -> object:
         self.paint_stdev += 1
 
     def decr_paint_stdev(self):
         self.paint_stdev -= 1
 
 
-plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
+
