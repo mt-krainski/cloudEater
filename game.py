@@ -43,9 +43,10 @@ SIDE_MENU_TEXTS = [
     "CLOUD EATER",
     "",
     "left click - spray",
+    "right click - unspray",
     "E - switch image type",
     "up - increase spread",
-    "down -decrease spread",
+    "down - decrease spread",
     "m wheel - change spread",
     "w - exit"]
 
@@ -131,12 +132,14 @@ class Game:
             plane.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
-                plane.draw_shooting()
-            plane.draw_paint_preview(paint_preview_surface)
+                plane.draw_shooting(red)
+
 
             if pygame.mouse.get_pressed()[2]:
-                paint_surface.fill(transparent_purple)
-                pass
+                plane.draw_shooting(transparent_purple)
+            plane.draw_paint_preview(paint_preview_surface)
+                #paint_surface.fill(transparent_purple)
+                #pass
                 # marked_points.clear()
 
             for event in pygame.event.get():
@@ -227,10 +230,10 @@ class Fighter:
         pygame.draw.circle(surface, light_grey,
                            (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
-    def draw_shooting(self):
+    def draw_shooting(self, colour):
         for i in range(100):
             pygame.draw.circle(
-                paint_surface, red,
+                paint_surface, colour,
                 (int(self.position[0] + random.gauss(0, self.paint_stdev)),
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
