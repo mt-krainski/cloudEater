@@ -7,6 +7,7 @@ GEOSS Hackathon demo of a gamifying approach to cloud classification.
 ## Install instructions
 ```
 git clone https://github.com/mt-krainski/cloudEater.git
+cd cloudEater
 pip install -r requirements.txt
 python newMain.py
 ```
