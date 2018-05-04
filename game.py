@@ -16,19 +16,21 @@ screen = pygame.display.set_mode(SCREEN_SIZE)
 
 white = (255, 255, 255)
 red = (255, 0, 0)
+black = (0, 0, 0)
 light_grey = (189,189,189)
 transparent_purple = (153, 50, 204)
 screen.fill(white)
 
+def setup_transparent_surface(surface, transparent_colour, alpha):
+    surface.fill(transparent_colour)
+    surface.set_colorkey(transparent_colour)
+    surface.set_alpha(alpha)
+
 paint_surface = pygame.Surface(SCREEN_SIZE)
-paint_surface.fill(transparent_purple)
-paint_surface.set_alpha(80)
-paint_surface.set_colorkey(transparent_purple)
+setup_transparent_surface(paint_surface, transparent_purple, 80)
 
 paint_preview_surface = pygame.Surface(SCREEN_SIZE)
-paint_preview_surface.fill(transparent_purple)
-paint_preview_surface.set_colorkey(transparent_purple)
-paint_preview_surface.set_alpha(128)
+setup_transparent_surface(paint_preview_surface, transparent_purple, 128)
 
 side_menu_surface = pygame.Surface((200, SCREEN_SIZE[1]))
 side_menu_surface.fill((238,238,238))
@@ -76,7 +78,6 @@ def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
     return angle
 
-
 old_angle = 0
 delta_angle_old = 0
 delta_distance = 0
@@ -120,6 +121,19 @@ class Game:
 
         BackGround = Background(None, [0, 0])
         BackGround.set_image(scene_provider.get_next_satellite_image())
+
+        if self.game_mode == GAMEMODE_ADVERSARY:
+
+            adversary_surface = pygame.Surface(SCREEN_SIZE)
+            setup_transparent_surface(adversary_surface, (0,0,0), 80)
+
+            adversary_bg_image = pygame.image.load(" ")
+
+            adversary_surface.blit(adversary_bg_image, [0, 0])
+            paint_surface.blit(adversary_surface, (0,0))
+
+        BackGround.set_image(scene_provider.get_next_satellite_image())
+
         while playing:
 
             screen.fill(white)
