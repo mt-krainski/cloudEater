@@ -10,6 +10,7 @@ SCREEN_SIZE = (800, 600)
 from backend.SceneProvider import SceneProvider
 
 scene_provider = SceneProvider()
+scene_provider.get_random_scene()
 
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode(SCREEN_SIZE)

@@ -33,7 +33,7 @@ class Menu:
         pygame.display.set_caption("menu")
 
         start_button = button.Button(screen, "PLAY SOLO", -220, 280)
-        start_adv_button = button.Button(screen, "ADVERSARY MODE", -140, 280)
+        start_adv_button = button.Button(screen, "COMBAT MODE", -140, 280)
         start_train_button = button.Button(screen, "MOUSE TRAINING", -60, 280)
         quit_button = button.Button(screen, "QUIT", 20, 280)
 

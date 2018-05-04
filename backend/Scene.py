@@ -23,15 +23,15 @@ class Scene:
         self._submits = submits
         if len(satellite_images) < 1:
             raise TypeError("Need at least one satellite image.")
-        if any(s.shape[0:2] != satellite_images[0].shape[0:2] for s in satellite_images):
-            raise TypeError(f"Satellite images are not all the same shape: {[s.shape for s in satellite_images]}")
+        #if any(s.shape[0:2] != satellite_images[0].shape[0:2] for s in satellite_images):
+        #    raise TypeError(f"Satellite images are not all the same shape: {[s.shape for s in satellite_images]}")
 
-        self._shape = tuple(self._satellite_images[0].shape[0:2])
+        self._shape = (600, 800)
 
-        if ground_truth.shape != self.shape:
-            raise TypeError(f"Ground truth must have shape {self.shape}, not {ground_truth.shape}")
-        if any(s.shape != self.shape for s in submits):
-            raise TypeError(f"Submits must have shape {self.shape}, not {[s.shape for s in submits]}")
+        #if ground_truth.shape != self.shape:
+        #    raise TypeError(f"Ground truth must have shape {self.shape}, not {ground_truth.shape}")
+        #if any(s.shape != self.shape for s in submits):
+        #    raise TypeError(f"Submits must have shape {self.shape}, not {[s.shape for s in submits]}")
 
     @property
     def id(self) -> int:
