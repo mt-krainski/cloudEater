@@ -30,6 +30,10 @@ class SceneProvider:
             return None
         return self.current_scene.past_submits[id % len(self.current_scene.past_submits)]
 
+    def get_random_scene(self):
+        self._scene_counter = np.random.randint(1,7)
+        return self.current_scene
+
 
     def end_round(self, pixels: np.ndarray):
         img = np.swapaxes(pixels.astype(np.float64),0,1)
