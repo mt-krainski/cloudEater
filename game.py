@@ -128,8 +128,8 @@ class Game:
     def play(self):
         playing = True
         level_finished = False
-        pygame.event.set_grab(True)
-        pygame.mouse.set_visible(False)
+        pygame.event.set_grab(False)
+        pygame.mouse.set_visible(True)
         pygame.mouse.set_pos(400,300)
 
         BackGround = Background(None, [0, 0])
@@ -249,10 +249,10 @@ class Fighter:
         self.position[1] += self.velocity * math.cos(self.bearing) * dt
 
     def update_velocity(self, mouse_position):
-        self.velocity = 0.5*get_distance(self.origin, mouse_position)
+        self.velocity = 0.5*get_distance(self.position, mouse_position)
 
     def update_bearing(self, mouse_position):
-        delta_bearing = self.bearing - get_angle(mouse_position, self.origin)
+        delta_bearing = self.bearing - get_angle(mouse_position, self.position)
 
         if delta_bearing - self.delta_bearing > math.pi:
             delta_bearing -= 2*math.pi
