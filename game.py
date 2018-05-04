@@ -27,7 +27,7 @@ def setup_transparent_surface(surface, transparent_colour, alpha):
     surface.set_alpha(alpha)
 
 paint_surface = pygame.Surface(SCREEN_SIZE)
-setup_transparent_surface(paint_surface, transparent_purple, 80)
+setup_transparent_surface(paint_surface, transparent_purple, 140)
 
 paint_preview_surface = pygame.Surface(SCREEN_SIZE)
 setup_transparent_surface(paint_preview_surface, transparent_purple, 128)
@@ -66,6 +66,7 @@ BASIC_TRIANGLE_POINTLIST = [(-10, -20), (10, -20), (0, 20)]
 
 GAMEMODE_SOLO = 0
 GAMEMODE_ADVERSARY = 1
+GAMEMODE_TRAINING = 2
 
 def update_mouse():
     return pygame.mouse.get_pos()
@@ -73,7 +74,6 @@ def update_mouse():
 
 def get_distance(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
-
 
 def get_angle(a, b):
     angle = -math.pi / 2 + math.atan2((a[1] - b[1]), (a[0] - b[0]))
@@ -115,16 +115,16 @@ class Game:
         self.dt = 1 / refresh_frequency
         self.plane = Fighter(plane_pos, velocity, bear, delta_bear, 20)
         self.aux_sprite_right = AuxFighterSprite(
-                                [int(SCREEN_SIZE[0]), 0], 
+                                [int(SCREEN_SIZE[0]), 0],
                                 self.plane)
         self.aux_sprite_left = AuxFighterSprite(
-                                [-int(SCREEN_SIZE[0]), 0], 
+                                [-int(SCREEN_SIZE[0]), 0],
                                 self.plane)
         self.aux_sprite_bottom = AuxFighterSprite(
-                                [0, int(SCREEN_SIZE[1])], 
+                                [0, int(SCREEN_SIZE[1])],
                                 self.plane)
         self.aux_sprite_top = AuxFighterSprite(
-                                [0, -int(SCREEN_SIZE[1])], 
+                                [0, -int(SCREEN_SIZE[1])],
                                 self.plane)
         self.game_mode = game_mode
 
@@ -141,11 +141,11 @@ class Game:
         if self.game_mode == GAMEMODE_ADVERSARY:
 
             adversary_surface = pygame.Surface(SCREEN_SIZE)
-            setup_transparent_surface(adversary_surface, (0,0,0), 20)
+            setup_transparent_surface(adversary_surface, black, 50)
 
             adversary_bg_image = pygame.surfarray.make_surface(np.swapaxes(scene_provider.get_submit(np.random.randint(0,100)),0,1))
-
             adversary_surface.blit(adversary_bg_image, [0, 0])
+
             paint_surface.blit(adversary_surface, (0,0))
 
         BackGround.set_image(scene_provider.get_next_satellite_image())
@@ -189,19 +189,26 @@ class Game:
             self.aux_sprite_top.draw(screen)
 
             if pygame.mouse.get_pressed()[0]:
-                self.plane.draw_shooting(red)
+                if self.game_mode == GAMEMODE_TRAINING:
+                    self.plane.draw_with_mouse(red)
+                else:
+                    self.plane.draw_shooting(red)
 
 
             if pygame.mouse.get_pressed()[2]:
-                self.plane.draw_shooting(transparent_purple)
-            self.plane.draw_paint_preview(paint_preview_surface)
-            self.aux_sprite_right.draw_paint_preview(paint_preview_surface)
-            self.aux_sprite_left.draw_paint_preview(paint_preview_surface)
-            self.aux_sprite_bottom.draw_paint_preview(paint_preview_surface)
-            self.aux_sprite_top.draw_paint_preview(paint_preview_surface)
-                #paint_surface.fill(transparent_purple)
-                #pass
-                # marked_points.clear()
+                if self.game_mode == GAMEMODE_TRAINING:
+                    self.plane.draw_with_mouse(transparent_purple)
+                else:
+                    self.plane.draw_shooting(transparent_purple)
+
+            if self.game_mode == GAMEMODE_TRAINING:
+                self.plane.draw_paint_preview_mouse(paint_preview_surface)
+            else:
+                self.plane.draw_paint_preview(paint_preview_surface)
+                self.aux_sprite_right.draw_paint_preview(paint_preview_surface)
+                self.aux_sprite_left.draw_paint_preview(paint_preview_surface)
+                self.aux_sprite_bottom.draw_paint_preview(paint_preview_surface)
+                self.aux_sprite_top.draw_paint_preview(paint_preview_surface)
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -230,7 +237,7 @@ class Game:
                 if keys[pygame.K_ESCAPE]:
                     self.game_end()
                     playing = False
-                    
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -300,12 +307,25 @@ class Fighter:
         pygame.draw.circle(surface, light_grey,
                            (int(self.position[0]), int(self.position[1])), self.paint_stdev*2, 0)
 
+    def draw_paint_preview_mouse(self, surface):
+        surface.fill(transparent_purple)
+        pygame.draw.circle(surface, light_grey,
+                           (int(pygame.mouse.get_pos()[0]), int(pygame.mouse.get_pos()[1])), self.paint_stdev * 2, 0)
+
     def draw_shooting(self, colour):
         for i in range(100):
             pygame.draw.circle(
                 paint_surface, colour,
                 (int(self.position[0] + random.gauss(0, self.paint_stdev)),
                     int(self.position[1] + random.gauss(0, self.paint_stdev))),
+                2, 0)
+
+    def draw_with_mouse(self, colour):
+        for i in range(100):
+            pygame.draw.circle(
+                paint_surface, colour,
+                (int(pygame.mouse.get_pos()[0] + random.gauss(0, self.paint_stdev)),
+                 int(pygame.mouse.get_pos()[1] + random.gauss(0, self.paint_stdev))),
                 2, 0)
 
     def incr_paint_stdev(self) -> object:
@@ -351,7 +371,7 @@ class AuxFighterSprite():
         points = [[item[0][0], item[1][0]] for item in new_pointlist]
 
         pygame.draw.polygon(screen, PLANE_COLOR, points)
-    
+
     def draw_paint_preview(self, surface):
         #surface.fill(transparent_purple)
         pygame.draw.circle(surface, light_grey,
