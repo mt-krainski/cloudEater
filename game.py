@@ -117,6 +117,20 @@ class Game:
 <<<<<<< HEAD
         self.game_mode = game_mode
 =======
+        self.aux_sprite_right = AuxFighterSprite(
+                                [int(SCREEN_SIZE[0]), 0], 
+                                self.plane)
+        self.aux_sprite_left = AuxFighterSprite(
+                                [-int(SCREEN_SIZE[0]), 0], 
+                                self.plane)
+        self.aux_sprite_bottom = AuxFighterSprite(
+                                [0, int(SCREEN_SIZE[1])], 
+                                self.plane)
+        self.aux_sprite_top = AuxFighterSprite(
+                                [0, -int(SCREEN_SIZE[1])], 
+                                self.plane)
+
+>>>>>>> csjeger
 
     def play(self):
         playing = True
